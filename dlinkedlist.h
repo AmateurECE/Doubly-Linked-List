@@ -10,8 +10,8 @@
  * LAST EDITED: 06/06/17
  ***/
 
-#ifndef __ET_DLINKEDLIST__
-#define __ET_DLINKEDLIST__
+#ifndef __ET_DLINKEDLIST_H__
+#define __ET_DLINKEDLIST_H__
 
 /*******************************************************************************
  * TYPE DEFINITIONS
@@ -59,4 +59,6 @@ extern int dlist_insprev(DList *, DListElm *, const void *);
 extern int dlist_rem(DList *, DListElm *, void **);
 extern int dlist_dest(DList *);
 
-#endif // __ET_DLINKEDLIST__
+#endif /* __ET_DLINKEDLIST_H__ */
+
+/******************************************************************************/
