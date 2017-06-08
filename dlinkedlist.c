@@ -251,8 +251,8 @@ int dlist_dest(DList * dlist)
 #ifdef CONFIG_DEBUG_DLIST
 int main(int argc, char * argv[])
 {
-  DList * list;
-  int * pNum;
+  DList * list = NULL;
+  int * pNum = NULL;
 
   if ((list = (DList *)malloc(sizeof(DList))) == NULL)
     error_exit("Could not allocate memory for DList!");
