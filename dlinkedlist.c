@@ -1,4 +1,4 @@
-/*******************************************************************************
+/******************************************************************************
  * NAME:	    dlinkedlist.c
  *
  * AUTHOR:	    Ethan D. Twardy
@@ -11,10 +11,10 @@
  *
  * CREATED:	    03/31/17
  *
- * LAST EDITED:	    06/06/17
+ * LAST EDITED:	    01/02/2018
  ***/
 
-/*******************************************************************************
+/******************************************************************************
  * INCLUDES
  ***/
 
@@ -28,7 +28,7 @@
 
 #include "dlinkedlist.h"
 
-/*******************************************************************************
+/******************************************************************************
  * LOCAL PROTOTYPES
  ***/
 
@@ -40,11 +40,11 @@ static void test_head_prev(DList *, int *);
 static void test_tail_prev(DList *, int *);
 #endif /* CONFIG_DEBUG_DLIST */
 
-/*******************************************************************************
+/******************************************************************************
  * API FUNCTIONS
  ***/
 
-/*******************************************************************************
+/******************************************************************************
  * FUNCTION:	    dlist_init
  *
  * DESCRIPTION:	    Initializes a DList pointer.
@@ -67,7 +67,7 @@ void dlist_init(DList * dlist, void (*destroy)(void * data))
   return;
 }
 
-/*******************************************************************************
+/******************************************************************************
  * FUNCTION:	    dlist_insnxt
  *
  * DESCRIPTION:	    Inserts a new node after the node specified.
@@ -118,7 +118,7 @@ int dlist_insnxt(DList * dlist, DListElm * node, const void * data)
   return 0;
 }
 
-/*******************************************************************************
+/******************************************************************************
  * FUNCTION:	    dlist_insprev
  *
  * DESCRIPTION:	    Inserts a new node before the node specified.
@@ -135,7 +135,9 @@ int dlist_insprev(DList * dlist, DListElm * node, const void * data)
 {
   DListElm * new;
   
-  /* Once again, do not allow a null pointer for node if the list is not empty. */
+  /* Once again, do not allow a null pointer for node if the list is not
+   * empty.
+   */
   if (node == NULL && !dlist_isempty(dlist))
     return -1;
 
@@ -171,7 +173,7 @@ int dlist_insprev(DList * dlist, DListElm * node, const void * data)
   return 0;
 }
 
-/*******************************************************************************
+/******************************************************************************
  * FUNCTION:	    dlist_rem
  *
  * DESCRIPTION:	    Removes the node provided.
@@ -216,11 +218,11 @@ int dlist_rem(DList * dlist, DListElm * node, void ** data)
   return 0;
 }
 
-/*******************************************************************************
+/******************************************************************************
  * FUNCTION:	    dlist_dest
  *
- * DESCRIPTION:	    Removes all nodes in the list and sets all bytes in the list
- *		    structure to be 0. If destroy is set to NULL, does not
+ * DESCRIPTION:	    Removes all nodes in the list and sets all memory in the
+ *		    structure to 0. If destroy is set to NULL, does not
  *		    destroy the data held within the nodes.
  *
  * ARGUMENTS:	    dlist: (DList *) -- the list to be operated on.
@@ -244,7 +246,7 @@ int dlist_dest(DList * dlist)
   return 0;
 }
 
-/*******************************************************************************
+/******************************************************************************
  * MAIN
  ***/
 
@@ -271,7 +273,7 @@ int main(int argc, char * argv[])
 }
 #endif /* CONFIG_DEBUG_DLIST */
 
-/*******************************************************************************
+/******************************************************************************
  * LOCAL FUNCTIONS
  ***/
 
@@ -396,4 +398,4 @@ static void test_tail_prev(DList * list, int * pNum)
 }
 #endif /* CONFIG_DEBUG_DLIST */
 
-/******************************************************************************/
+/*****************************************************************************/
