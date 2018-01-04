@@ -1,13 +1,13 @@
 /******************************************************************************
- * TITLE:	    dlinkedlist.h
+ * NAME:	    dlinkedlist.h
  *
  * AUTHOR:	    Ethan D. Twardy
  *
  * DESCRIPTION:	    Header file for the implementation of a doubly-linked-list.
  *
- * CREATED: 03/31/17
+ * CREATED:	    03/31/2017
  *
- * LAST EDITED: 01/02/2018
+ * LAST EDITED:	    01/03/2018
  ***/
 
 #ifndef __ET_DLINKEDLIST_H__
@@ -17,22 +17,22 @@
  * TYPE DEFINITIONS
  ***/
 
-typedef struct _DListElm_ {
+typedef struct _dlistelmt_ {
 
   void * data;
-  struct _DListElm_ * prev;
-  struct _DListElm_ * next;
+  struct _dlistelmt_ * prev;
+  struct _dlistelmt_ * next;
 
-} DListElm;
+} dlistelmt;
 
 typedef struct _dlist_ {
 
   int size;
   void (*destroy)(void * data);
-  DListElm * head;
-  DListElm * tail;
+  dlistelmt * head;
+  dlistelmt * tail;
 
-} DList;
+} dlist;
 
 /******************************************************************************
  * MACRO DEFINITIONS
@@ -53,11 +53,11 @@ typedef struct _dlist_ {
  * API FUNCTION PROTOTYPES
  ***/
 
-extern void dlist_init(DList *, void (*)(void *));
-extern int dlist_insnxt(DList *, DListElm *, const void *);
-extern int dlist_insprev(DList *, DListElm *, const void *);
-extern int dlist_rem(DList *, DListElm *, void **);
-extern int dlist_dest(DList *);
+extern dlist * dlist_create(void (*destroy)(void *));
+extern int dlist_insnxt(dlist * list, dlistelmt * elmt, const void * data);
+extern int dlist_insprev(dlist * list, dlistelmt * elmt, const void * data);
+extern int dlist_remove(dlist * list, dlistelmt * elmt, void ** data);
+extern int dlist_destroy(dlist ** list);
 
 /* TODO: Implement dlist_traverse
  */

@@ -7,24 +7,21 @@
 #
 # CREATED:	    06/06/2017
 #
-# LAST EDITED:	    01/02/2018
+# LAST EDITED:	    01/03/2018
 ###
 
-P = dlinkedlist
-OBJECTS = dlinkedlist.c
-CFLAGS = -Wall -O3
-LDLIBS=
 CC=gcc
+ifeq ($(MAKECMDGOALS),debug)
+	CFLAGS = -g -O0 -Wall -D CONFIG_DEBUG_DLIST
+else
+	CFLAGS = -Wall -O3
+endif
 
-$(P):
-	$(CC) $(CFLAGS) -o $(P) $(OBJECTS) $(LDLIBS)
+dlist:
 
 .PHONY: debug clean
 
-CFLAGS_DEBUG = -g -O0 -Wall -D CONFIG_DEBUG_DLIST
-
-debug:
-	$(CC) $(CFLAGS_DEBUG) -o $(P) $(OBJECTS) $(LDLIBS)
+debug: dlist
 
 clean:
 	rm -rf *.c~

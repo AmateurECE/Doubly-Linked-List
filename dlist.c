@@ -1,5 +1,5 @@
 /******************************************************************************
- * NAME:	    dlinkedlist.c
+ * NAME:	    dlist.c
  *
  * AUTHOR:	    Ethan D. Twardy
  *
@@ -9,9 +9,9 @@
  *		    printed out in the same order as when inserting, regardless
  *		    of the order that they are stored in the list.
  *
- * CREATED:	    03/31/17
+ * CREATED:	    03/31/2017
  *
- * LAST EDITED:	    01/02/2018
+ * LAST EDITED:	    01/03/2018
  ***/
 
 /******************************************************************************
@@ -26,7 +26,7 @@
 #include <time.h>
 #endif /* CONFIG_DEBUG_DLIST */
 
-#include "dlinkedlist.h"
+#include "dlist.h"
 
 /******************************************************************************
  * LOCAL PROTOTYPES
@@ -34,10 +34,10 @@
 
 #ifdef CONFIG_DEBUG_DLIST
 static inline void error_exit(char *);
-static void test_head_next(DList *, int *);
-static void test_tail_next(DList *, int *);
-static void test_head_prev(DList *, int *);
-static void test_tail_prev(DList *, int *);
+static void test_head_next(dlist *, int *);
+static void test_tail_next(dlist *, int *);
+static void test_head_prev(dlist *, int *);
+static void test_tail_prev(dlist *, int *);
 #endif /* CONFIG_DEBUG_DLIST */
 
 /******************************************************************************
@@ -45,26 +45,32 @@ static void test_tail_prev(DList *, int *);
  ***/
 
 /******************************************************************************
- * FUNCTION:	    dlist_init
+ * FUNCTION:	    dlist_create
  *
- * DESCRIPTION:	    Initializes a DList pointer.
+ * DESCRIPTION:	    Initializes a dlist and returns a pointer to it.
  *
- * ARGUMENTS:	    dlist: (DList *) -- the list to be operated on.
+ * ARGUMENTS:	    dlist: (dlist *) -- the list to be operated on.
  *		    destroy: (void (*)(void *)) -- function pointer for user-
  *			     defined function to free memory associated with
  *			     data held in the list.
  *
- * RETURN:	    void
+ * RETURN:	    (dlist *) -- pointer to the new struct, or NULL if there
+ *		    was an error.
  *
  * NOTES:	    O(1)
  ***/
-void dlist_init(DList * dlist, void (*destroy)(void * data))
+dlist * dlist_create(void (*destroy)(void *))
 {
-  dlist->size = 0;
-  dlist->destroy = destroy;
-  dlist->head = NULL;
-  dlist->tail = NULL;
-  return;
+  dlist * list = NULL;
+  if ((list = malloc(sizeof(dlist))) == NULL)
+    return NULL;
+
+  list->size = 0;
+  list->destroy = destroy;
+  list->head = NULL;
+  list->tail = NULL;
+
+  return list;
 }
 
 /******************************************************************************
@@ -72,23 +78,23 @@ void dlist_init(DList * dlist, void (*destroy)(void * data))
  *
  * DESCRIPTION:	    Inserts a new node after the node specified.
  *
- * ARGUMENTS:	    dlist: (DList *) -- the list to be operated on.
- *		    node: (DListElm *) -- the reference node.
+ * ARGUMENTS:	    dlist: (dlist *) -- the list to be operated on.
+ *		    node: (dlistelmt *) -- the reference node.
  *		    data: (const void *) -- the data to populate the new node.
  *
  * RETURN:	    int -- 0 on success, -1 otherwise.
  *
  * NOTES:	    O(1)
  ***/
-int dlist_insnxt(DList * dlist, DListElm * node, const void * data)
+int dlist_insnxt(dlist * dlist, dlistelmt * node, const void * data)
 {
-  DListElm * new;
+  dlistelmt * new;
 
   if (node == NULL && !dlist_isempty(dlist))
     return -1;
 
   /* Perform null check and allocate new memory */
-  if ((new = (DListElm *)malloc(sizeof(DListElm))) == NULL)
+  if ((new = (dlistelmt *)malloc(sizeof(dlistelmt))) == NULL)
     return -1;
 
   new->data = (void *)data;
@@ -123,17 +129,17 @@ int dlist_insnxt(DList * dlist, DListElm * node, const void * data)
  *
  * DESCRIPTION:	    Inserts a new node before the node specified.
  *
- * ARGUMENTS:	    dlist: (DList *) -- the list to be operated on.
- *		    node: (DListElm *) -- the reference node.
+ * ARGUMENTS:	    dlist: (dlist *) -- the list to be operated on.
+ *		    node: (dlistelmt *) -- the reference node.
  *		    data: (const void *) -- the data to populate the new node.
  *
  * RETURN:	    int -- 0 on success, -1 otherwise.
  *
  * NOTES:	    O(1)
  ***/
-int dlist_insprev(DList * dlist, DListElm * node, const void * data)
+int dlist_insprev(dlist * dlist, dlistelmt * node, const void * data)
 {
-  DListElm * new;
+  dlistelmt * new;
   
   /* Once again, do not allow a null pointer for node if the list is not
    * empty.
@@ -141,7 +147,7 @@ int dlist_insprev(DList * dlist, DListElm * node, const void * data)
   if (node == NULL && !dlist_isempty(dlist))
     return -1;
 
-  if ((new = (DListElm *)malloc(sizeof(DListElm))) == NULL)
+  if ((new = (dlistelmt *)malloc(sizeof(dlistelmt))) == NULL)
     return -1;
 
   new->data = (void *)data;
@@ -174,19 +180,19 @@ int dlist_insprev(DList * dlist, DListElm * node, const void * data)
 }
 
 /******************************************************************************
- * FUNCTION:	    dlist_rem
+ * FUNCTION:	    dlist_remove
  *
  * DESCRIPTION:	    Removes the node provided.
  *
- * ARGUMENTS:	    dlist: (DList *) -- the list to be operated on.
- *		    node: (DListElm *) -- the node to be removed.
+ * ARGUMENTS:	    dlist: (dlist *) -- the list to be operated on.
+ *		    node: (dlistelmt *) -- the node to be removed.
  *		    data: (const void *) -- data from the node is placed here.
  *
  * RETURN:	    int -- 0 on success, -1 otherwise.
  *
  * NOTES:	    O(1)
  ***/
-int dlist_rem(DList * dlist, DListElm * node, void ** data)
+int dlist_remove(dlist * dlist, dlistelmt * node, void ** data)
 {
   if (node == NULL || dlist_isempty(dlist))
     return -1;
@@ -219,30 +225,31 @@ int dlist_rem(DList * dlist, DListElm * node, void ** data)
 }
 
 /******************************************************************************
- * FUNCTION:	    dlist_dest
+ * FUNCTION:	    dlist_destroy
  *
  * DESCRIPTION:	    Removes all nodes in the list and sets all memory in the
  *		    structure to 0. If destroy is set to NULL, does not
  *		    destroy the data held within the nodes.
  *
- * ARGUMENTS:	    dlist: (DList *) -- the list to be operated on.
+ * ARGUMENTS:	    list: (dlist *) -- the list to be operated on.
  *
  * RETURN:	    int -- 0 on success, -1 otherwise.
  *
  * NOTES:	    O(n)
  ***/
-int dlist_dest(DList * dlist)
+int dlist_destroy(dlist ** list)
 {
   void * data;
-  if (dlist->destroy == NULL)
+  if ((*list)->destroy == NULL)
     return -1;
 
-  while (!dlist_isempty(dlist)) {
-    if (dlist_rem(dlist, dlist_tail(dlist), (void **)&data) == 0)
-      dlist->destroy(data);
+  while (!dlist_isempty(*list)) {
+    if (dlist_remove(*list, dlist_tail(*list), (void **)&data) == 0)
+      (*list)->destroy(data);
   }
 
-  memset(dlist, 0, sizeof(DList));
+  free(*list);
+  *list = NULL;
   return 0;
 }
 
@@ -253,23 +260,22 @@ int dlist_dest(DList * dlist)
 #ifdef CONFIG_DEBUG_DLIST
 int main(int argc, char * argv[])
 {
-  DList * list = NULL;
-  int * pNum = NULL;
 
-  if ((list = (DList *)malloc(sizeof(DList))) == NULL)
-    error_exit("Could not allocate memory for DList!");
+  /* TODO: Refactor testing
+   */
+
+  dlist * list = NULL;
+  int * pNum = NULL;
 
   srand((unsigned)time(NULL));
 
   test_head_next(list, pNum);
-
   test_tail_next(list, pNum);
-
   test_head_prev(list, pNum);
-
   test_tail_prev(list, pNum);
 
-  free(list);
+  if (list != NULL)
+    error_exit("List was not destroyed correctly!");
 }
 #endif /* CONFIG_DEBUG_DLIST */
 
@@ -284,14 +290,15 @@ static inline void error_exit(char * msg)
   exit(1);
 }
 
-static void test_head_next(DList * list, int * pNum)
+static void test_head_next(dlist * list, int * pNum)
 {
   /* ==================================================
    * HEAD TEST, INSNXT
    * ================================================== */
   printf("Head test, insnxt\n");
   printf("==== Inserting ====\n");
-  dlist_init(list, free);
+  if ((list = dlist_create(free)) == NULL)
+    error_exit("Could not create list!");
   for (int i = 0; i < 10; i++) {
     pNum = (int *)malloc(sizeof(int));
     *pNum = rand() % 10;
@@ -305,22 +312,23 @@ static void test_head_next(DList * list, int * pNum)
 
   printf("==== Removing =====\n");
   while (!dlist_isempty(list)) {
-    dlist_rem(list, dlist_head(list), (void **)&pNum);
+    dlist_remove(list, dlist_head(list), (void **)&pNum);
     printf("int %d @ %p\n", *pNum, pNum);
     /* FREE MEMORY HERE */
   }
   printf("\n");
-  dlist_dest(list);
+  dlist_destroy(&list);
 }
 
-static void test_tail_next(DList * list, int * pNum)
+static void test_tail_next(dlist * list, int * pNum)
 {
   /* ==================================================
    * TAIL TEST, INSNXT
    * ================================================== */
   printf("Tail test, insnxt\n");
   printf("==== Inserting ====\n");
-  dlist_init(list, free);
+  if ((list = dlist_create(free)) == NULL)
+    error_exit("Could not create list!");
   for (int i = 0; i < 10; i++) {
     pNum = (int *)malloc(sizeof(int));
     *pNum = rand() % 10;
@@ -334,21 +342,22 @@ static void test_tail_next(DList * list, int * pNum)
 
   printf("==== Removing =====\n");
   while (!dlist_isempty(list)) {
-    dlist_rem(list, dlist_head(list), (void **)&pNum);
+    dlist_remove(list, dlist_head(list), (void **)&pNum);
     printf("int %d @ %p\n", *pNum, pNum);
     /* FREE MEMORY HERE */
   }
   printf("\n");
-  dlist_dest(list);
+  dlist_destroy(&list);
 }
 
-static void test_head_prev(DList * list, int * pNum)
+static void test_head_prev(dlist * list, int * pNum)
 {
   /* ==================================================
    * HEAD TEST, INSPREV
    * ================================================== */
   printf("Head test, insprev\n");
-  dlist_init(list, free);
+  if ((list = dlist_create(free)) == NULL)
+    error_exit("Could not create list!");
   for (int i = 0; i < 10; i++) {
     pNum = (int *)malloc(sizeof(int));
     *pNum = rand() % 10;
@@ -361,21 +370,22 @@ static void test_head_prev(DList * list, int * pNum)
   /* ===== REMOVE FROM THE LIST ===== */
   printf("==== Removing =====\n");
   while (!dlist_isempty(list)) {
-    dlist_rem(list, dlist_tail(list), (void **)&pNum);
+    dlist_remove(list, dlist_tail(list), (void **)&pNum);
     printf("int %d @ %p\n", *pNum, pNum);
     /* FREE MEMORY HERE */
   }
   printf("\n");
-  dlist_dest(list);
+  dlist_destroy(&list);
 }
 
-static void test_tail_prev(DList * list, int * pNum)
+static void test_tail_prev(dlist * list, int * pNum)
 {
   /* ==================================================
    * TAIL TEST, INSPREV
    * ================================================== */
   printf("Tail test, insprev\n");
-  dlist_init(list, free);
+  if ((list = dlist_create(free)) == NULL)
+    error_exit("Could not create list!");
   for (int i = 0; i < 10; i++) {
     pNum = (int *)malloc(sizeof(int));
     *pNum = rand() % 10;
@@ -389,12 +399,12 @@ static void test_tail_prev(DList * list, int * pNum)
 
   printf("==== Removing =====\n");
   while (!dlist_isempty(list)) {
-    dlist_rem(list, dlist_tail(list), (void **)&pNum);
+    dlist_remove(list, dlist_tail(list), (void **)&pNum);
     printf("int %d @ %p\n", *pNum, pNum);
     /* FREE MEMORY HERE */
   }
   printf("\n");
-  dlist_dest(list);
+  dlist_destroy(&list);
 }
 #endif /* CONFIG_DEBUG_DLIST */
 
