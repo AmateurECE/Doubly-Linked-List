@@ -11,7 +11,7 @@
  *
  * CREATED:	    03/31/2017
  *
- * LAST EDITED:	    01/03/2018
+ * LAST EDITED:	    02/12/2018
  ***/
 
 /******************************************************************************
@@ -245,7 +245,8 @@ int dlist_destroy(dlist ** list)
 
   while (!dlist_isempty(*list)) {
     if (dlist_remove(*list, dlist_tail(*list), (void **)&data) == 0)
-      (*list)->destroy(data);
+      if ((*list)->destroy != NULL)
+	(*list)->destroy(data);
   }
 
   free(*list);
@@ -314,7 +315,7 @@ static void test_head_next(dlist * list, int * pNum)
   while (!dlist_isempty(list)) {
     dlist_remove(list, dlist_head(list), (void **)&pNum);
     printf("int %d @ %p\n", *pNum, pNum);
-    /* FREE MEMORY HERE */
+    free(pNum);
   }
   printf("\n");
   dlist_destroy(&list);
@@ -344,7 +345,7 @@ static void test_tail_next(dlist * list, int * pNum)
   while (!dlist_isempty(list)) {
     dlist_remove(list, dlist_head(list), (void **)&pNum);
     printf("int %d @ %p\n", *pNum, pNum);
-    /* FREE MEMORY HERE */
+    free(pNum);
   }
   printf("\n");
   dlist_destroy(&list);
@@ -372,7 +373,7 @@ static void test_head_prev(dlist * list, int * pNum)
   while (!dlist_isempty(list)) {
     dlist_remove(list, dlist_tail(list), (void **)&pNum);
     printf("int %d @ %p\n", *pNum, pNum);
-    /* FREE MEMORY HERE */
+    free(pNum);
   }
   printf("\n");
   dlist_destroy(&list);
@@ -401,7 +402,7 @@ static void test_tail_prev(dlist * list, int * pNum)
   while (!dlist_isempty(list)) {
     dlist_remove(list, dlist_tail(list), (void **)&pNum);
     printf("int %d @ %p\n", *pNum, pNum);
-    /* FREE MEMORY HERE */
+    free(pNum);
   }
   printf("\n");
   dlist_destroy(&list);

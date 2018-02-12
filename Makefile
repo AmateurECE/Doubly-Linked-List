@@ -7,7 +7,7 @@
 #
 # CREATED:	    06/06/2017
 #
-# LAST EDITED:	    01/03/2018
+# LAST EDITED:	    02/12/2018
 ###
 
 CC=gcc
@@ -24,8 +24,7 @@ dlist:
 debug: dlist
 
 clean:
-	rm -rf *.c~
-	rm -rf *.h~
-	rm -rf makefile~
+	rm -f dlist
+	rm -rf dlist.dSYM
 
 ###############################################################################
