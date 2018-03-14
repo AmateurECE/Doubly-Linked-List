@@ -11,7 +11,7 @@
  *
  * CREATED:	    03/31/2017
  *
- * LAST EDITED:	    02/12/2018
+ * LAST EDITED:	    03/14/2018
  ***/
 
 /******************************************************************************
@@ -252,6 +252,28 @@ int dlist_destroy(dlist ** list)
   free(*list);
   *list = NULL;
   return 0;
+}
+
+/******************************************************************************
+ * FUNCTION:	    dlist_traverse
+ *
+ * DESCRIPTION:	    Traverse the dlist struct at `list' and call the function
+ *		    `func' on each of the elements therein.
+ *
+ * ARGUMENTS:	    list: (dlist *) -- the list to traverse
+ *		    func: (void (*)(void *)) -- the callback function.
+ *
+ * RETURN:	    void.
+ *
+ * NOTES:	    none.
+ ***/
+void dlist_traverse(dlist * list, void (*func)(void *))
+{
+  if (func == NULL)
+    return;
+  dlistelmt * elm = NULL;
+  for (elm = dlist_head(list); elm != NULL; elm = dlist_next(elm))
+    func(dlist_data(elm));
 }
 
 /******************************************************************************

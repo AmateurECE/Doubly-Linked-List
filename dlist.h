@@ -7,7 +7,7 @@
  *
  * CREATED:	    03/31/2017
  *
- * LAST EDITED:	    01/03/2018
+ * LAST EDITED:	    03/14/2018
  ***/
 
 #ifndef __ET_DLINKEDLIST_H__
@@ -58,9 +58,7 @@ extern int dlist_insnxt(dlist * list, dlistelmt * elmt, const void * data);
 extern int dlist_insprev(dlist * list, dlistelmt * elmt, const void * data);
 extern int dlist_remove(dlist * list, dlistelmt * elmt, void ** data);
 extern int dlist_destroy(dlist ** list);
-
-/* TODO: Implement dlist_traverse
- */
+extern void dlist_traverse(dlist * list, void (*func)(void *));
 
 #endif /* __ET_DLINKEDLIST_H__ */
 
